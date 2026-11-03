@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Zero_Somente_Para_Remover</fullName>
+    <active>true</active>
+    <description>Zero apenas em Remover.</description>
+    <errorConditionFormula>AND(Quantidade_Nova__c = 0, TEXT(Acao__c) &lt;&gt; "Remover")</errorConditionFormula>
+    <errorDisplayField>Quantidade_Nova__c</errorDisplayField>
+    <errorMessage>Quantidade zero só é permitida para a ação Remover.</errorMessage>
+</ValidationRule>

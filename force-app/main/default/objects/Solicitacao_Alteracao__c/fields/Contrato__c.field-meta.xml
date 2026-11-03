@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Contrato__c</fullName>
+    <label>Contrato</label>
+    <referenceTo>Contrato_Assinatura__c</referenceTo>
+    <relationshipLabel>Solicitações</relationshipLabel>
+    <relationshipName>Solicitacoes</relationshipName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

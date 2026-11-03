@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tipo__c</fullName>
+    <label>Tipo</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Upgrade</fullName>
+                <default>false</default>
+                <label>Upgrade</label>
+            </value>
+            <value>
+                <fullName>Downgrade</fullName>
+                <default>false</default>
+                <label>Downgrade</label>
+            </value>
+            <value>
+                <fullName>Adição de Licenças</fullName>
+                <default>false</default>
+                <label>Adição de Licenças</label>
+            </value>
+            <value>
+                <fullName>Redução de Licenças</fullName>
+                <default>false</default>
+                <label>Redução de Licenças</label>
+            </value>
+            <value>
+                <fullName>Recurso Adicional</fullName>
+                <default>false</default>
+                <label>Recurso Adicional</label>
+            </value>
+            <value>
+                <fullName>Misto</fullName>
+                <default>false</default>
+                <label>Misto</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

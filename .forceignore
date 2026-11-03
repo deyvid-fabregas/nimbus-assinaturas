@@ -1,0 +1,8 @@
+# Arquivos locais / pacotes de teste
+**/jsconfig.json
+**/.eslintrc.json
+**/__tests__/**
+package.json
+node_modules
+.sfdx
+.sf

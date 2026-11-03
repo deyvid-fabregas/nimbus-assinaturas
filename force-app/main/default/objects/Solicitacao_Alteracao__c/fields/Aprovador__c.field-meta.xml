@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aprovador__c</fullName>
+    <description>Usuario que decidiu (DecisionService).</description>
+    <label>Aprovador</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Solicitações Decididas</relationshipLabel>
+    <relationshipName>Solicitacoes_Decididas</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

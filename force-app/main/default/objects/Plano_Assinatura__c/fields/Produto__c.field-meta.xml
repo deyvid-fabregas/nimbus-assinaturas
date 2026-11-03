@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Produto__c</fullName>
+    <description>Produto da licenca do plano (distinto entre planos).</description>
+    <label>Produto</label>
+    <referenceTo>Product2</referenceTo>
+    <relationshipLabel>Planos de Assinatura</relationshipLabel>
+    <relationshipName>Planos_Assinatura</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

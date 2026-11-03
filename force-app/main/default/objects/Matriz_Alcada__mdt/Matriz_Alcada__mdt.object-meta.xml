@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Faixas de variacao e nivel de aprovacao resultante.</description>
+    <label>Matriz de Alçada</label>
+    <pluralLabel>Matriz de Alçada</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

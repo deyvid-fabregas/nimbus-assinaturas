@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Preco_Base_Positivo</fullName>
+    <active>true</active>
+    <description>Preco maior que zero.</description>
+    <errorConditionFormula>Preco_Base_Mensal__c &lt;= 0</errorConditionFormula>
+    <errorDisplayField>Preco_Base_Mensal__c</errorDisplayField>
+    <errorMessage>O preço base mensal deve ser maior que zero.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Data_Fim_Posterior_ao_Inicio</fullName>
+    <active>true</active>
+    <description>Fim &gt; inicio.</description>
+    <errorConditionFormula>AND(NOT(ISBLANK(Data_Inicio__c)), NOT(ISBLANK(Data_Fim__c)), Data_Fim__c &lt;= Data_Inicio__c)</errorConditionFormula>
+    <errorDisplayField>Data_Fim__c</errorDisplayField>
+    <errorMessage>A data de fim deve ser posterior à data de início.</errorMessage>
+</ValidationRule>

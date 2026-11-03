@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Nivel_Aprovacao__c</fullName>
+    <description>Escritor: Flow de roteamento.</description>
+    <label>Nível de Aprovação</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Automática</fullName>
+                <default>false</default>
+                <label>Automática</label>
+            </value>
+            <value>
+                <fullName>Gerente de Contas</fullName>
+                <default>false</default>
+                <label>Gerente de Contas</label>
+            </value>
+            <value>
+                <fullName>Diretor Comercial</fullName>
+                <default>false</default>
+                <label>Diretor Comercial</label>
+            </value>
+            <value>
+                <fullName>Financeiro</fullName>
+                <default>false</default>
+                <label>Financeiro</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

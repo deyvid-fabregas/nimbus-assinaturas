@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Quantidade_Nova_Nao_Negativa</fullName>
+    <active>true</active>
+    <description>Nova &gt;= 0.</description>
+    <errorConditionFormula>AND(NOT(ISBLANK(Quantidade_Nova__c)), Quantidade_Nova__c &lt; 0)</errorConditionFormula>
+    <errorDisplayField>Quantidade_Nova__c</errorDisplayField>
+    <errorMessage>A quantidade nova não pode ser negativa.</errorMessage>
+</ValidationRule>

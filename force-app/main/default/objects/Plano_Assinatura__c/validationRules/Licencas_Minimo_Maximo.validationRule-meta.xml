@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Licencas_Minimo_Maximo</fullName>
+    <active>true</active>
+    <description>Minimo &lt;= maximo.</description>
+    <errorConditionFormula>OR(Licencas_Minimas__c &lt; 0, Licencas_Minimas__c &gt; Licencas_Maximas__c)</errorConditionFormula>
+    <errorDisplayField>Licencas_Minimas__c</errorDisplayField>
+    <errorMessage>As licenças mínimas devem ser não negativas e menores ou iguais às máximas.</errorMessage>
+</ValidationRule>

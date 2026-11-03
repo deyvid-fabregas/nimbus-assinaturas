@@ -1,0 +1,15 @@
+{
+  "orgName": "Nimbus Assinaturas",
+  "edition": "Developer",
+  "language": "pt_BR",
+  "country": "BR",
+  "features": [],
+  "settings": {
+    "orderSettings": {
+      "enableOrders": true
+    },
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    }
+  }
+}

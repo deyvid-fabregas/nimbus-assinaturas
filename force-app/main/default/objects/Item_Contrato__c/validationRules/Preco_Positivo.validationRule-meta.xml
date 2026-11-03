@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Preco_Positivo</fullName>
+    <active>true</active>
+    <description>Preco &gt; 0.</description>
+    <errorConditionFormula>OR(ISBLANK(Preco_Unitario_Mensal__c), Preco_Unitario_Mensal__c &lt;= 0)</errorConditionFormula>
+    <errorDisplayField>Preco_Unitario_Mensal__c</errorDisplayField>
+    <errorMessage>O preço unitário mensal deve ser maior que zero.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Aumento Abs 10000</label>
+    <protected>false</protected>
+    <values>
+        <field>Ativo__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Direcao__c</field>
+        <value xsi:type="xsd:string">AUMENTO</value>
+    </values>
+    <values>
+        <field>Criterio__c</field>
+        <value xsi:type="xsd:string">ABSOLUTO</value>
+    </values>
+    <values>
+        <field>Limite_Superior__c</field>
+        <value xsi:type="xsd:double">10000</value>
+    </values>
+    <values>
+        <field>Nivel__c</field>
+        <value xsi:type="xsd:string">GERENTE</value>
+    </values>
+    <values>
+        <field>Responsavel_Tipo__c</field>
+        <value xsi:type="xsd:string">GRUPO</value>
+    </values>
+    <values>
+        <field>Responsavel_Nome__c</field>
+        <value xsi:type="xsd:string">Aprovadores_Gerentes</value>
+    </values>
+</CustomMetadata>

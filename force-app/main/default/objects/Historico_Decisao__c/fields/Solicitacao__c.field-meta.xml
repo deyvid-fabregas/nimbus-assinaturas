@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Solicitacao__c</fullName>
+    <label>Solicitação</label>
+    <referenceTo>Solicitacao_Alteracao__c</referenceTo>
+    <relationshipLabel>Histórico de Decisões</relationshipLabel>
+    <relationshipName>Historicos</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+</CustomField>

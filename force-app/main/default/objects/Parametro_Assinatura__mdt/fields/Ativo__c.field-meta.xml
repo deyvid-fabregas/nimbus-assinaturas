@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Ativo__c</fullName>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <description>Exatamente um registro deve estar ativo.</description>
+    <label>Ativo</label>
+    <required>false</required>
+    <defaultValue>false</defaultValue>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>
