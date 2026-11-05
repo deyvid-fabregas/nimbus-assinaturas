@@ -1,56 +1,41 @@
 # Status do projeto
 
-Nada foi compilado nem executado em org até aqui. A verificação foi estática (assinaturas contra a Parte 1, chaves/parênteses balanceados, ausência de SOQL/DML em loop, XMLs bem formados, campos e valores de picklist coerentes com `SubscriptionConstants`). Espere ajustes no primeiro deploy.
+As Partes 1, 1b, 2 e as entregas 3A e 3B foram concluídas. Nada foi compilado nem implantado em uma org; a validação até aqui foi estática. O primeiro deploy ainda pode revelar incompatibilidades de Apex, permissões ou metadados (riscos conhecidos em [DECISOES_E_LIMITACOES.md](DECISOES_E_LIMITACOES.md)).
 
 ## Andamento
 
 | Parte | Escopo | Situação |
 |---|---|---|
-| 1 | Arquitetura base, domínio/política, Selectors, utilitários | Entregue |
-| 2 | US-01 (simulação/rascunho) e US-02 (itens, snapshot, envio, recálculo) | Entregue, sem compilar |
-| 1b | Modelo de dados, CMDT, Custom Permissions, Permission Sets | Entregue, sem deploy |
-| 3 | US-03 a US-06 (decisão, roteamento, aplicação), Invocables, Flows, Controllers, LWC | Pendente |
-| 4 | Testes | Pendente |
+| 1 | Arquitetura base, domínio/política, Selectors e utilitários | Entregue |
+| 1b | Modelo de dados, CMDT, Custom Permissions e Permission Sets | Entregue; sem deploy |
+| 2 | US-01 e US-02: simulação, rascunho, itens, snapshot, envio e recálculo | Entregue; sem compilação |
+| 3A | Gate de status, roteamento, decisão e reabertura (US-03/US-04) | Entregue; sem compilação |
+| 3B | Aplicação transacional (US-06) | Entregue; sem compilação |
+| 3C | Record-Triggered Flow, Screen Flows e Flow Tests | Pendente |
+| 3D | LWCs, Controller do simulador, Jest, FlexiPages, layouts, tabs e app | Pendente |
+| 3E | Documentos finais e pacote completo da Parte 3 | Pendente |
+| 4 | Testes e validação integrada | Pendente |
 
-## Parte 2 — entregue
+## Parte 3A — entregue
 
-- **US-01:** `SubscriptionChangeRequestDTO`, `SubscriptionChangeResultDTO`, `SubscriptionChangeService` (`simulate`, `saveDraft`; idempotente pela chave, com Savepoint, edição só de Rascunho), domínio puro (`ChangeContext`, `ItemResolutionPolicy`, `ChangePlanner`), `ChangeContextLoader`, `PricebookResolver`.
-- **US-02:** triggers `SubscriptionItemChangeTrigger`, `SubscriptionRequestTrigger`, `SubscriptionContractItemTrigger` com Handlers; `RequestItemService` (congela itens fora de Rascunho, preço e delta no servidor, barra produto duplicado); `RequestSnapshotService`; `RequestSubmissionService` (lock `FOR UPDATE`, uma Pendente por contrato); `RequestRecalculationService` (2 SOQL e 1 DML para 200 itens, CA01 ≤ 5 / ≤ 3); `ContractMrrService`; `CalculatedFieldWriter`.
-- **Edições:** `SubscriptionConstants` (+12 códigos de erro), `PricebookSelector` e `RequestItemSelector` (+1 método cada).
+- `StatusTransitionContext` e gate no `SolicitacaoAlteracaoHandler`: decisões, aplicação, expiração e reabertura exigem escopo autorizado por solicitação e status de destino. Edição direta de status por API/Data Loader é recusada; execução de Apex arbitrário continua sendo um limite conhecido.
+- `ApprovalRoutingService` e actions invocáveis: classificação por matriz, incremento do ciclo, Task deduplicada por ciclo e aprovação automática. Falha de roteamento é registrada e compensada para Rascunho.
+- `SubscriptionDecisionService` e actions: decisão em lote, Custom Permission, designação, segregação de funções, lock, validação do ciclo e reabertura com histórico.
+- `AuthorizedSystemWriter`, `DesignationSelector` e campo `Task.Chave_Deduplicacao__c`.
 
-## Parte 1b — entregue
+## Parte 3B — entregue
 
-- 8 objetos: `Plano_Assinatura__c`, `Contrato_Assinatura__c`, `Item_Contrato__c`, `Solicitacao_Alteracao__c`, `Item_Alteracao__c`, `Historico_Decisao__c`, `Aditivo_Contrato__c`, `Log_Tecnico__c`. `Item_Alteracao__c.Solicitacao__c` com reparenting habilitado; `Solicitacao_Alteracao__c` com atividades habilitadas.
-- CMDT `Parametro_Assinatura__mdt` e `Matriz_Alcada__mdt` (13 linhas) com grupos públicos `Aprovadores_Gerentes`, `Aprovadores_Diretores`, `Aprovadores_Financeiro`.
-- 4 Custom Permissions e 3 Permission Sets: `Assinatura_Vendedor`, `Assinatura_Aprovador`, `Assinatura_Administrador`.
-- Apoio: `config/project-scratch-def.json`, `.forceignore`, `scripts/apex/seed-catalog.apex`.
+- `SubscriptionApplyService` aplica uma solicitação aprovada por chamada com lock Solicitação → Contrato, revalidação e controle de versão. Versão desatualizada expira a solicitação com histórico.
+- Savepoint e rollback preservam a atomicidade; falhas técnicas são registradas após o rollback, deixando a solicitação aprovada e reprocessável.
+- `ContractApplyWriter` isola as escritas de itens do contrato, versão/plano, Aditivo, Order e OrderItems. Status permanece em `USER_MODE` sob o gate de transição.
+- Lock, versão otimista e chave única do Aditivo protegem contra aplicação duplicada. OrderItems usam quantidade assinada, o que requer quantidade negativa habilitada no org.
+- Controller/DTO de aplicação adicionados. O scratch definition habilita quantidade negativa; isso ainda não foi verificado em uma org.
 
-## Decisões fora do plano original
+## Ainda pendente e riscos de validação
 
-Detalhes em [DECISOES_E_LIMITACOES.md](DECISOES_E_LIMITACOES.md).
+- 3C, 3D, 3E e os testes/validação da Parte 4, conforme o andamento acima.
+- Validar em org o acesso a `Group`, `GroupMember` e `UserRole` com `WITH USER_MODE`; `getPopulatedFieldsAsMap()` nos writers; `FOR UPDATE` combinado com `WITH USER_MODE`; quantidade negativa; FLS de Task; e configuração dos campos de Order/OrderItem.
+- A `Task.OwnerId` recebe um usuário ativo membro do responsável; a decisão é autorizada pela designação e Custom Permission, não pelo dono da Task.
+- A designação considera membros diretos de grupos/filas ou usuários do papel; grupos aninhados e papéis subordinados não são expandidos.
 
-- `SubscriptionContractItemTrigger` criada (exigida pela US-02; também mantém `MRR_Atual__c`).
-- `PricebookResolver` antecipado da Parte 3 (preço dos recursos adicionais da US-01).
-- Snapshot (`MRR_Base__c`, `Versao_Contrato_Base__c`) gravado pela Trigger de insert, não pelo Service, para que nenhum canal informe a base e reduza a alçada.
-- `CalculatedFieldWriter` é `without sharing`, único da Parte 2; grava só campos calculados protegidos.
-- Bloqueio de itens de contrato vale também para carga inicial; seeds precisam abrir o `ControlledWriteContext`.
-- Sharing: objetos em Public Read/Write; controle real por Permission Sets.
-- Um único `Assinatura_Aprovador`; o nível é diferenciado pela participação no grupo da matriz.
-- `Aplicar_Alteracao` fica em `Assinatura_Vendedor` (US-06).
-
-## Pendências
-
-- Page layouts, tabs, app e FlexiPages.
-- Acesso às classes Apex expostas.
-- Campo de deduplicação da Task.
-- Escritas da aplicação no `Assinatura_Vendedor` (Aditivo, Order, `Versao__c`), conforme o `SubscriptionApplyService`.
-- Controller e LWC do simulador (US-01): o Controller deve capturar a exceção e devolver `SubscriptionChangeResultDTO.failure(...)`; se escapar do `@AuraEnabled`, o log técnico é revertido.
-- Ação de envio para aprovação (Rascunho → Pendente), na Parte 3.
-
-## Lacuna de segurança (tratar na Parte 3)
-
-A máquina de estados permite `Pendente → Aprovada/Rejeitada` a qualquer usuário com edição de `Status__c`. Só o `SubscriptionDecisionService` checa permissão, designação e segregação de funções; edição direta por API as contorna. Proposta: escopo controlado nos moldes do `ControlledWriteContext` para as transições de decisão e aplicação.
-
-## Próximo passo
-
-Validar deploy em Scratch Org, depois Parte 3 (US-03 a US-06).
+Detalhes das escolhas, limitações e cenários de validação em [DECISOES_E_LIMITACOES.md](DECISOES_E_LIMITACOES.md), [ARQUITETURA.md](ARQUITETURA.md) e [MODELO_DE_DADOS.md](MODELO_DE_DADOS.md).
