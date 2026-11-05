@@ -31,6 +31,16 @@ As Partes 1, 1b, 2 e as entregas 3A e 3B foram concluídas. Nada foi compilado n
 - Lock, versão otimista e chave única do Aditivo protegem contra aplicação duplicada. OrderItems usam quantidade assinada, o que requer quantidade negativa habilitada no org.
 - Controller/DTO de aplicação adicionados. O scratch definition habilita quantidade negativa; isso ainda não foi verificado em uma org.
 
+## Próxima etapa: implantação controlada em uma nova org
+
+1. Definir se o destino será uma Scratch Org ou uma sandbox e autorizar um alias Salesforce explicitamente.
+2. Conferir Orders e quantidade negativa; criar/confirmar os grupos públicos e associar os aprovadores.
+3. Executar o preview, implantar os metadados e resolver incompatibilidades reportadas pelo primeiro deploy.
+4. Atribuir Permission Sets por perfil e só então executar a carga de demonstração, se ela for desejada.
+5. Adicionar e executar os testes Apex e validar os fluxos de ponta a ponta.
+
+Consulte [IMPLANTACAO_NOVA_ORG.md](IMPLANTACAO_NOVA_ORG.md) para os comandos e pré-requisitos. Como ainda não existem Flows e interface, esta versão não oferece a experiência completa de usuário final. Não usar em produção até concluir as partes pendentes, os testes e a revisão de segurança/configuração.
+
 ## Ainda pendente e riscos de validação
 
 - 3C, 3D, 3E e os testes/validação da Parte 4, conforme o andamento acima.
