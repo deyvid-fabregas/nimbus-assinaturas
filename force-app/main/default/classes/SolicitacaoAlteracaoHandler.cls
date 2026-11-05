@@ -73,7 +73,7 @@ public with sharing class SolicitacaoAlteracaoHandler {
             Solicitacao_Alteracao__c old = oldById.get(record.Id);
             String error = protectedFieldError(record, old);
             if (error == null) {
-                error = RequestStateMachine.transitionError(old.Status__c, record.Status__c);
+                error = transitionError(record, old);
             }
             if (error != null) {
                 reject(record, error, rejected);
@@ -144,6 +144,33 @@ public with sharing class SolicitacaoAlteracaoHandler {
         if (rejected.add(record.Id)) {
             record.addError(message);
         }
+    }
+
+    @TestVisible
+    private static final String GATE_MESSAGE =
+        'Esta mudança de status só pode ser feita pela ação autorizada de decisão, aplicação ou reabertura. Use a ação correspondente na solicitação.';
+
+    /**
+     * Maquina de estados + escopo controlado. Transicoes "gated" (decisao, aplicacao, reabertura) so passam com
+     * StatusTransitionContext aberto para este registro e status de destino; a compensacao Pendente -> Rascunho
+     * so existe quando um service autorizado a abriu.
+     */
+    private static String transitionError(Solicitacao_Alteracao__c record, Solicitacao_Alteracao__c old) {
+        if (record.Status__c == old.Status__c) {
+            return null;
+        }
+        Boolean authorized = StatusTransitionContext.isAuthorized(record.Id, record.Status__c);
+        if (RequestStateMachine.isCompensationTransition(old.Status__c, record.Status__c)) {
+            return authorized ? null : RequestStateMachine.transitionError(old.Status__c, record.Status__c);
+        }
+        String error = RequestStateMachine.transitionError(old.Status__c, record.Status__c);
+        if (error != null) {
+            return error;
+        }
+        if (RequestStateMachine.requiresAuthorizedService(old.Status__c, record.Status__c) && !authorized) {
+            return GATE_MESSAGE;
+        }
+        return null;
     }
 
     private static String protectedFieldError(Solicitacao_Alteracao__c record, Solicitacao_Alteracao__c old) {

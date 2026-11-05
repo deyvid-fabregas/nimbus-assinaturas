@@ -8,4 +8,11 @@ public with sharing class SubscriptionClock {
     public static Date today() {
         return todayOverride != null ? todayOverride : Date.today();
     }
+
+    @TestVisible private static Datetime nowOverride;
+
+    /** Instante corrente (data/hora de decisao e de historico); injetavel em teste. */
+    public static Datetime now() {
+        return nowOverride != null ? nowOverride : Datetime.now();
+    }
 }

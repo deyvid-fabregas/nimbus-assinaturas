@@ -95,4 +95,34 @@ public with sharing class RequestStateMachine {
     public static Boolean isTerminal(String status) {
         return !ALLOWED.containsKey(status);
     }
+
+    // ---- Parte 3: transicoes que exigem service autorizado (ver StatusTransitionContext) ----
+
+    private static final Set<String> AUTHORIZED_TARGETS = new Set<String>{
+        SubscriptionConstants.REQ_APROVADA,
+        SubscriptionConstants.REQ_REJEITADA,
+        SubscriptionConstants.REQ_APLICADA,
+        SubscriptionConstants.REQ_EXPIRADA
+    };
+
+    /**
+     * True quando a mudanca de status so pode ser feita por um service autorizado: decisao (Aprovada/Rejeitada),
+     * aplicacao (Aplicada/Expirada) e reabertura (Rejeitada -> Rascunho, que exige historico "Reaberta").
+     * Rascunho -> Pendente (envio, validado pela Trigger) e Pendente -> Cancelada continuam abertos ao usuario.
+     */
+    public static Boolean requiresAuthorizedService(String fromStatus, String toStatus) {
+        if (fromStatus == toStatus) {
+            return false;
+        }
+        return AUTHORIZED_TARGETS.contains(toStatus)
+            || (fromStatus == SubscriptionConstants.REQ_REJEITADA && toStatus == SubscriptionConstants.REQ_RASCUNHO);
+    }
+
+    /**
+     * Aresta de COMPENSACAO (Pendente -> Rascunho): nao pertence a tabela de transicoes do usuario; so e aceita
+     * pela Trigger quando um service autorizado a abriu (falha de roteamento desfaz o envio).
+     */
+    public static Boolean isCompensationTransition(String fromStatus, String toStatus) {
+        return fromStatus == SubscriptionConstants.REQ_PENDENTE && toStatus == SubscriptionConstants.REQ_RASCUNHO;
+    }
 }

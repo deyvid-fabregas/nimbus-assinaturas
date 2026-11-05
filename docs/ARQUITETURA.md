@@ -181,6 +181,28 @@ docs/                 (esta documentação)
 
 **Recursão (US-02):** `RecursionGuard` por **ID + fingerprint de estado** (`base|delta`) no recálculo; os Handlers só validam (sem DML), portanto a atualização de campos por Flow na mesma transação reexecuta a Trigger com `Status__c` inalterado e nada dispara ou bloqueia. Não há booleano estático global.
 
+### Entregue na Parte 3 — Entrega 3A
+
+| Camada | Classes |
+|---|---|
+| Autorização de status | `StatusTransitionContext`; `RequestStateMachine.requiresAuthorizedService` / `isCompensationTransition`; gate em `SolicitacaoAlteracaoHandler` |
+| Roteamento (US-03) | `ApprovalRoutingService`, `ApprovalRoutingAction`, `ApprovalRoutingFaultAction` |
+| Decisão (US-04) | `SubscriptionDecisionService` (bulk), `SubscriptionDecisionAction`, `SubscriptionReopenAction` |
+| Dados/escrita | `DesignationSelector` (USER_MODE), `AuthorizedSystemWriter` (única escrita isolada junto com `CalculatedFieldWriter`) |
+| Metadado | `Task.Chave_Deduplicacao__c`; `classAccesses` nos 3 Permission Sets |
+| Arquivos existentes alterados | `SubscriptionConstants` (+constantes), `SubscriptionClock.now()`, `RequestStateMachine`, `SolicitacaoAlteracaoHandler` |
+
+Orçamento (200 solicitações): roteamento ≤ 8 SOQL / 5 DML; decisão 5 SOQL / ≤ 4 DML.
+
+### Entregue na Parte 3 — Entrega 3B (US-06)
+
+| Camada | Classes |
+|---|---|
+| Service | `SubscriptionApplyService` (atômico, idempotente, lock Solicitação → Contrato) |
+| Controller/DTO | `SubscriptionApplyController` (nunca lança), `SubscriptionApplyResultDTO` |
+| Escrita isolada | `ContractApplyWriter` (itens, contrato, Aditivo, Order/OrderItem) |
+| Alterados | `PricebookResolver.resolveEntries`, `SubscriptionConstants` (+3), Permission Sets (class access + leitura de Order/OrderItem), `project-scratch-def.json` (quantidade negativa) |
+
 ### Planejado (próximas partes)
 
 | Parte | Entregas |

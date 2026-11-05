@@ -65,3 +65,19 @@ Para segregar por nível, crie um Permission Set por Custom Permission.
 * Campos obrigatórios e master-detail não recebem FLS (regra da plataforma): ficam editáveis para quem tem create/edit no objeto.
 * `Variacao_Percentual__c` usa precisão 18,2 (base pequena pode gerar percentuais enormes).
 * Picklists são *restricted*; valores com acento são valores de API (devem coincidir com `SubscriptionConstants`).
+
+## Atualização (Parte 3 — 3A)
+
+* **`Task.Chave_Deduplicacao__c`** (Text 80): chave `APR|<SolicitacaoId>|<Ciclo>` da Task de roteamento. Escrita apenas por
+  `AuthorizedSystemWriter`; sem FLS em Permission Set (não é editável por usuário).
+* **Class access** adicionado: `Assinatura_Vendedor` (`ApprovalRoutingAction`, `ApprovalRoutingFaultAction`,
+  `SubscriptionReopenAction`), `Assinatura_Aprovador` (`SubscriptionDecisionAction`, `SubscriptionReopenAction`),
+  `Assinatura_Administrador` (as quatro). Controllers/LWC e `SubscriptionApplyController` entram em 3B/3D.
+* Pendências mantidas: escritas da aplicação (Aditivo, Order, `Versao__c`) → 3B; layouts, tabs, app e FlexiPages → 3D.
+
+## Atualização (Parte 3 — 3B)
+
+* `Assinatura_Vendedor`, `Assinatura_Aprovador` e `Assinatura_Administrador`: leitura de `Order` e `OrderItem`.
+* `Assinatura_Vendedor`: class access a `SubscriptionApplyController`. **Nenhuma** permissão de escrita nova (a aplicação grava por
+  `ContractApplyWriter`; ver `DECISOES_E_LIMITACOES.md`).
+* Scratch org: `orderSettings.enableNegativeQuantity = true` (necessário para OrderItem de redução/remoção).

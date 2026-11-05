@@ -6,7 +6,8 @@
   "features": [],
   "settings": {
     "orderSettings": {
-      "enableOrders": true
+      "enableOrders": true,
+      "enableNegativeQuantity": true
     },
     "lightningExperienceSettings": {
       "enableS1DesktopEnabled": true

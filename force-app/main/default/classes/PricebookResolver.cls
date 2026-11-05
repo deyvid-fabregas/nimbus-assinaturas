@@ -60,4 +60,13 @@ public with sharing class PricebookResolver {
         }
         return result;
     }
+
+    /** Entradas de preco ATIVAS (com Id, necessario ao OrderItem) do pricebook para os produtos; produto sem entrada fica ausente. */
+    public Map<Id, PricebookEntry> resolveEntries(Id pricebookId, Set<Id> productIds) {
+        Map<Id, PricebookEntry> result = new Map<Id, PricebookEntry>();
+        for (PricebookEntry entry : pricebooks.selectActiveEntries(pricebookId, productIds)) {
+            result.put(entry.Product2Id, entry);
+        }
+        return result;
+    }
 }

@@ -97,4 +97,32 @@ public with sharing class SubscriptionConstants {
     public static final String ERR_PENDENTE_EXISTENTE = 'PENDENTE_EXISTENTE';
     public static final String ERR_TOTAIS_DESATUALIZADOS = 'TOTAIS_DESATUALIZADOS';
     public static final String ERR_CAMPO_PROTEGIDO = 'CAMPO_PROTEGIDO';
+
+    // ---- Parte 3 (US-03 a US-06): autorizacao, decisao e roteamento ----
+    public static final String ERR_TRANSICAO_NAO_AUTORIZADA = 'TRANSICAO_NAO_AUTORIZADA';
+    public static final String ERR_NAO_DESIGNADO = 'NAO_DESIGNADO';
+    public static final String ERR_SEGREGACAO_FUNCOES = 'SEGREGACAO_FUNCOES';
+    public static final String ERR_CICLO_DESATUALIZADO = 'CICLO_DESATUALIZADO';
+    public static final String ERR_JA_DECIDIDA = 'SOLICITACAO_JA_DECIDIDA';
+    public static final String ERR_DECISAO_NAO_APLICAVEL = 'DECISAO_NAO_APLICAVEL';
+
+    // Matriz_Alcada__mdt.Responsavel_Tipo__c
+    public static final String RESP_GRUPO = 'GRUPO';
+    public static final String RESP_FILA = 'FILA';
+    public static final String RESP_PAPEL = 'PAPEL';
+
+    // Group.Type (sObject Group)
+    public static final String GROUP_TYPE_PUBLIC = 'Regular';
+    public static final String GROUP_TYPE_QUEUE = 'Queue';
+
+    // Task de roteamento (chave de deduplicacao = APR|<SolicitacaoId>|<Ciclo>)
+    public static final String TASK_KEY_PREFIX = 'APR';
+    public static final String TASK_STATUS_OPEN = 'Not Started';
+    public static final String TASK_STATUS_COMPLETED = 'Completed';
+    public static final String TASK_PRIORITY_NORMAL = 'Normal';
+
+    // ---- Parte 3B (US-06): aplicacao ----
+    public static final String ERR_DATA_EFETIVACAO_FUTURA = 'DATA_EFETIVACAO_FUTURA';
+    public static final String ERR_STATUS_NAO_APLICAVEL = 'STATUS_NAO_APLICAVEL';
+    public static final String ORDER_STATUS_DRAFT = 'Draft';
 }
