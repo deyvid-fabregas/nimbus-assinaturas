@@ -6,8 +6,6 @@
  *              Os valores precisam coincidir com os valores de API das picklists.
  */
 public with sharing class SubscriptionConstants {
-    private SubscriptionConstants() {}
-
     // Contrato_Assinatura__c.Status__c
     public static final String CTR_RASCUNHO = 'Rascunho';
     public static final String CTR_ATIVO = 'Ativo';

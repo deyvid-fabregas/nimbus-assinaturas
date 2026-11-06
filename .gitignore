@@ -1,7 +1,0 @@
-.sf/
-.sfdx/
-node_modules/
-.vscode/
-.idea/
-*.log
-.DS_Store
