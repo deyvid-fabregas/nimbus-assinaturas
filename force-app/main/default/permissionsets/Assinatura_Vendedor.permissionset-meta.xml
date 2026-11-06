@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
     <classAccesses>
+        <apexClass>SubscriptionRequestSummaryAction</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>SubscriptionApplyAction</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
         <apexClass>SubscriptionApplyController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
@@ -226,6 +234,18 @@
         <field>Aditivo_Contrato__c.Versao_Resultante__c</field>
         <readable>true</readable>
     </fieldPermissions>
+    <flowAccesses>
+        <enabled>true</enabled>
+        <flow>Enviar_Solicitacao_Aprovacao</flow>
+    </flowAccesses>
+    <flowAccesses>
+        <enabled>true</enabled>
+        <flow>Reabrir_Solicitacao_Alteracao</flow>
+    </flowAccesses>
+    <flowAccesses>
+        <enabled>true</enabled>
+        <flow>Aplicar_Alteracao_Aprovada</flow>
+    </flowAccesses>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Assinatura - Vendedor</label>
     <objectPermissions>
