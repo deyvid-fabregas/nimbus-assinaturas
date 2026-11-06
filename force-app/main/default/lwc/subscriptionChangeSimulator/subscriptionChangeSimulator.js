@@ -2,8 +2,8 @@ import { LightningElement, api, wire } from 'lwc';
 import { notifyRecordUpdateAvailable } from 'lightning/uiRecordApi';
 import { RefreshEvent } from 'lightning/refresh';
 import loadContext from '@salesforce/apex/SubscriptionChangeController.loadContext';
-import simulate from '@salesforce/apex/SubscriptionChangeController.simulate';
-import saveDraft from '@salesforce/apex/SubscriptionChangeController.saveDraft';
+import simulate from '@salesforce/apex/SubscriptionChangeController.simulateJson';
+import saveDraft from '@salesforce/apex/SubscriptionChangeController.saveDraftJson';
 
 // A tela só envia INTENÇÃO; preços, deltas, totais e nível vêm do servidor.
 export default class SubscriptionChangeSimulator extends LightningElement {
@@ -216,7 +216,7 @@ export default class SubscriptionChangeSimulator extends LightningElement {
         this.isBusy = true;
         this.feedback = undefined;
         try {
-            this.result = await method({ request: this.buildRequest() });
+            this.result = await method({ requestJson: JSON.stringify(this.buildRequest()) });
         } catch (error) {
             this.result = { success: false, message: this.reduceError(error) };
         } finally {

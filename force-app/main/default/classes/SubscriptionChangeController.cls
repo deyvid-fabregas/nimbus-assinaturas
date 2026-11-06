@@ -41,6 +41,27 @@ public with sharing class SubscriptionChangeController {
         return runSaveDraft(new SubscriptionChangeService(), request);
     }
 
+    // Entrada em JSON: o LWC envia o rascunho serializado porque o Aura entregava o DTO vazio.
+    @AuraEnabled
+    public static SubscriptionChangeResultDTO simulateJson(String requestJson) {
+        return runSimulate(new SubscriptionChangeService(), parseRequest(requestJson));
+    }
+
+    @AuraEnabled
+    public static SubscriptionChangeResultDTO saveDraftJson(String requestJson) {
+        return runSaveDraft(new SubscriptionChangeService(), parseRequest(requestJson));
+    }
+
+    private static SubscriptionChangeRequestDTO parseRequest(String requestJson) {
+        if (String.isBlank(requestJson)) {
+            return new SubscriptionChangeRequestDTO();
+        }
+        try {
+            return (SubscriptionChangeRequestDTO) JSON.deserialize(requestJson, SubscriptionChangeRequestDTO.class);
+        } catch (JSONException invalid) {
+            return new SubscriptionChangeRequestDTO();
+        }
+    }
     @AuraEnabled(cacheable=true)
     public static ContextDTO loadContext(Id contractId) {
         ContextDTO context = new ContextDTO();

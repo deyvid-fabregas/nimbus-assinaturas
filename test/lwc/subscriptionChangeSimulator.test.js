@@ -1,7 +1,7 @@
 import { createElement } from 'lwc';
 import SubscriptionChangeSimulator from 'c/subscriptionChangeSimulator';
-import simulate from '@salesforce/apex/SubscriptionChangeController.simulate';
-import saveDraft from '@salesforce/apex/SubscriptionChangeController.saveDraft';
+import simulate from '@salesforce/apex/SubscriptionChangeController.simulateJson';
+import saveDraft from '@salesforce/apex/SubscriptionChangeController.saveDraftJson';
 import loadContext from '@salesforce/apex/SubscriptionChangeController.loadContext';
 import { notifyRecordUpdateAvailable } from 'lightning/uiRecordApi';
 
@@ -13,8 +13,8 @@ jest.mock(
     },
     { virtual: true }
 );
-jest.mock('@salesforce/apex/SubscriptionChangeController.simulate', () => ({ default: jest.fn() }), { virtual: true });
-jest.mock('@salesforce/apex/SubscriptionChangeController.saveDraft', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/SubscriptionChangeController.simulateJson', () => ({ default: jest.fn() }), { virtual: true });
+jest.mock('@salesforce/apex/SubscriptionChangeController.saveDraftJson', () => ({ default: jest.fn() }), { virtual: true });
 jest.mock(
     'lightning/uiRecordApi',
     () => ({ notifyRecordUpdateAvailable: jest.fn(() => Promise.resolve()) }),
@@ -117,7 +117,7 @@ describe('c-subscription-change-simulator', () => {
         element.shadowRoot.querySelector('[data-id="simulate"]').click();
         await flushPromises();
 
-        const request = simulate.mock.calls[0][0].request;
+        const request = JSON.parse(simulate.mock.calls[0][0].requestJson);
         expect(request.items).toEqual([{ productId: '01t000000000001AAA', action: 'Alterar Quantidade', newQuantity: 8 }]);
         expect(request.proposedPlanId).toBe('a02000000000001AAA');
         expect(request.justification).toBe('Mais licenças');
@@ -136,7 +136,7 @@ describe('c-subscription-change-simulator', () => {
         element.shadowRoot.querySelector('[data-id="simulate"]').click();
         await flushPromises();
 
-        expect(simulate.mock.calls[0][0].request.items).toEqual([
+        expect(JSON.parse(simulate.mock.calls[0][0].requestJson).items).toEqual([
             { productId: '01t000000000001AAA', action: 'Remover', newQuantity: 0 }
         ]);
     });
@@ -148,7 +148,7 @@ describe('c-subscription-change-simulator', () => {
         element.shadowRoot.querySelector('[data-id="simulate"]').click();
         await flushPromises();
 
-        const request = simulate.mock.calls[0][0].request;
+        const request = JSON.parse(simulate.mock.calls[0][0].requestJson);
         expect(request.items).toEqual([]);
         expect(request.proposedPlanId).toBeNull();
         expect(element.shadowRoot.querySelector('[data-id="result-lines"]')).toBeNull();
@@ -173,7 +173,7 @@ describe('c-subscription-change-simulator', () => {
 
         element.shadowRoot.querySelector('[data-id="simulate"]').click();
         await flushPromises();
-        expect(simulate.mock.calls[0][0].request.items).toEqual([
+        expect(JSON.parse(simulate.mock.calls[0][0].requestJson).items).toEqual([
             { productId: '01t000000000002AAA', action: 'Adicionar', newQuantity: 1 }
         ]);
 
@@ -227,8 +227,8 @@ describe('c-subscription-change-simulator', () => {
         element.shadowRoot.querySelector('[data-id="save"]').click();
         await flushPromises();
 
-        const first = saveDraft.mock.calls[0][0].request;
-        const second = saveDraft.mock.calls[1][0].request;
+        const first = JSON.parse(saveDraft.mock.calls[0][0].requestJson);
+        const second = JSON.parse(saveDraft.mock.calls[1][0].requestJson);
         expect(first.requestId).toBeUndefined();
         expect(first.idempotencyKey).toBeTruthy();
         expect(second.requestId).toBe('a01000000000009AAA');
