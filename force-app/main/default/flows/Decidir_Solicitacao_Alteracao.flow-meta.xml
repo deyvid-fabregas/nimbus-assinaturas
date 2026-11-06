@@ -73,6 +73,47 @@
         <nameSegment>SubscriptionRequestSummaryAction</nameSegment>
         <versionSegment>1</versionSegment>
     </actionCalls>
+    <actionCalls>
+        <name>Do_Decide</name>
+        <label>Registrar decisão</label>
+        <locationX>176</locationX>
+        <locationY>500</locationY>
+        <actionName>SubscriptionDecisionAction</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Result_Screen</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Error_Screen</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>requestId</name>
+            <value><elementReference>recordId</elementReference></value>
+        </inputParameters>
+        <inputParameters>
+            <name>cycle</name>
+            <value><elementReference>varCycle</elementReference></value>
+        </inputParameters>
+        <inputParameters>
+            <name>decision</name>
+            <value><elementReference>Decision_Choice</elementReference></value>
+        </inputParameters>
+        <inputParameters>
+            <name>reason</name>
+            <value><elementReference>Reject_Reason</elementReference></value>
+        </inputParameters>
+        <outputParameters>
+            <assignToReference>varSuccess</assignToReference>
+            <name>success</name>
+        </outputParameters>
+        <outputParameters>
+            <assignToReference>varMessage</assignToReference>
+            <name>message</name>
+        </outputParameters>
+        <nameSegment>SubscriptionDecisionAction</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
     <decisions>
         <name>Check_Can_Decide</name>
         <label>Pode decidir?</label>
@@ -147,47 +188,6 @@
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
     </screens>
-    <actionCalls>
-        <name>Do_Decide</name>
-        <label>Registrar decisão</label>
-        <locationX>176</locationX>
-        <locationY>500</locationY>
-        <actionName>SubscriptionDecisionAction</actionName>
-        <actionType>apex</actionType>
-        <connector>
-            <targetReference>Result_Screen</targetReference>
-        </connector>
-        <faultConnector>
-            <targetReference>Error_Screen</targetReference>
-        </faultConnector>
-        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>requestId</name>
-            <value><elementReference>recordId</elementReference></value>
-        </inputParameters>
-        <inputParameters>
-            <name>cycle</name>
-            <value><elementReference>varCycle</elementReference></value>
-        </inputParameters>
-        <inputParameters>
-            <name>decision</name>
-            <value><elementReference>Decision_Choice</elementReference></value>
-        </inputParameters>
-        <inputParameters>
-            <name>reason</name>
-            <value><elementReference>Reject_Reason</elementReference></value>
-        </inputParameters>
-        <outputParameters>
-            <assignToReference>varSuccess</assignToReference>
-            <name>success</name>
-        </outputParameters>
-        <outputParameters>
-            <assignToReference>varMessage</assignToReference>
-            <name>message</name>
-        </outputParameters>
-        <nameSegment>SubscriptionDecisionAction</nameSegment>
-        <versionSegment>1</versionSegment>
-    </actionCalls>
     <screens>
         <name>Result_Screen</name>
         <label>Resultado da decisão</label>
