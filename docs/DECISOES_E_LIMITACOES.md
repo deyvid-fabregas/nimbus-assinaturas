@@ -156,3 +156,23 @@ página, US-05) e acesso ao `SubscriptionApplyController`. `without sharing`: `C
   contrato tornam o desenho frágil; evolução: Queueable por lotes de itens e leitura agregada (ver RESPOSTAS_CODE_REVIEW.md, 3E).
 - Não há pro rata: o Order registra variações mensais cheias a partir da data de efetivação.
 - Troca de plano exige produtos distintos entre planos (decisão da Parte 2).
+
+---
+
+# Parte 3 — Entrega 3C (Flows e apoio Apex)
+
+## Decisões
+
+1. **Flow de roteamento enxuto:** apenas a chamada do Apex e o Fault Path. Entrada: `Status__c` igual a Pendente **e** alterado (`doesRequireRecordChangedToMeetCriteria`), de modo que reprocessar ou salvar a Pendente de novo não dispara. A classificação continua lendo `Matriz_Alcada__mdt`; nenhum ID fixo nos metadados (verificado por varredura).
+2. **Fault Path** (`ApprovalRoutingFaultAction`): grava `Log_Tecnico__c` (persistente) e desfaz o envio (Pendente → Rascunho, aresta de compensação sob `StatusTransitionContext`). Falhas de negócio dentro do Apex (sem aprovador designado, alçada bloqueada) seguem o mesmo caminho dentro do service, sem depender do Fault do Flow.
+3. **Screen Flows só com elementos padrão:** resumo via action Apex (HTML **escapado**, `escapeHtml4`) em vez de componentes de tabela/LWC, para não depender de LWC e reduzir risco de metadado. Os indicadores `can*` apenas escondem ações; o servidor revalida sempre (acessar o Flow por URL direta continua bloqueado no Apex).
+4. **Envio por Update Records** (usuário corrente): `Status__c = Pendente`; a Trigger valida o conteúdo. Depois o Flow relê o resumo para mostrar o estado real (Pendente ou, se o roteamento falhou e foi compensado, Rascunho).
+5. **Actions de tela e de aplicação não são em lote:** `SubscriptionRequestSummaryAction` e `SubscriptionApplyAction` recusam mais de um registro por chamada (evita SOQL/DML por registro; a aplicação é atômica por solicitação).
+6. **Tempo em espera** da Pendente = criação da Task aberta mais recente (consulta só de campos padrão, em `USER_MODE`); o campo `Chave_Deduplicacao__c` não é lido pelo usuário (sem FLS).
+7. **Flow Tests declarativos não foram gerados** nesta entrega (esquema não verificado em org; a lógica está no Apex). Roteiro dos 6 casos: (1) Rascunho→Pendente dispara; (2) Pendente→Pendente não dispara; (3) Pendente→Aprovada não dispara; (4) fault compensa e devolve Rascunho; (5) registro sem Id → ação devolve falha sem lançar; (6) sem IDs fixos. Serão criados no Flow Builder e exportados (`sf project retrieve start`) na Parte 4, junto com testes Apex que disparam o Flow por DML.
+
+## Limitações (3C)
+
+- Nada foi implantado. Riscos específicos: parâmetros de saída das actions invocáveis nos Screen Flows; Flow after-save cuja action Apex atualiza o mesmo registro; ordem de implantação Flows × classes.
+- Os Screen Flows não aparecem como botões até a 3D (Quick Actions manuais; ver `IMPLANTACAO_NOVA_ORG.md`).
+- Quem não tem o Permission Set não consegue abrir o Flow (`flowAccesses`) e, mesmo que consiga, o Apex bloqueia.

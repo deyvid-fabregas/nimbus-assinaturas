@@ -1,20 +1,20 @@
 # Status do projeto
 
-As Partes 1, 1b, 2 e as entregas 3A e 3B foram concluídas. Nada foi compilado nem implantado em uma org; a validação até aqui foi estática. O primeiro deploy ainda pode revelar incompatibilidades de Apex, permissões ou metadados (riscos conhecidos em [DECISOES_E_LIMITACOES.md](DECISOES_E_LIMITACOES.md)).
+As Partes 1, 1b, 2 e as entregas 3A, 3B e 3C foram concluídas. Nada foi compilado nem implantado em uma org; a validação até aqui foi estática (XML bem formado, assinaturas e campos cruzados com o projeto, actions dos Flows conferidas contra o Apex). O primeiro deploy ainda pode revelar incompatibilidades de Apex, Flow, permissões ou metadados (riscos conhecidos em [DECISOES_E_LIMITACOES.md](DECISOES_E_LIMITACOES.md)).
 
 ## Andamento
 
-| Parte | Escopo | Situação |
-|---|---|---|
-| 1 | Arquitetura base, domínio/política, Selectors e utilitários | Entregue |
-| 1b | Modelo de dados, CMDT, Custom Permissions e Permission Sets | Entregue; sem deploy |
-| 2 | US-01 e US-02: simulação, rascunho, itens, snapshot, envio e recálculo | Entregue; sem compilação |
-| 3A | Gate de status, roteamento, decisão e reabertura (US-03/US-04) | Entregue; sem compilação |
-| 3B | Aplicação transacional (US-06) | Entregue; sem compilação |
-| 3C | Record-Triggered Flow, Screen Flows e Flow Tests | Pendente |
-| 3D | LWCs, Controller do simulador, Jest, FlexiPages, layouts, tabs e app | Pendente |
-| 3E | Documentos finais e pacote completo da Parte 3 | Pendente |
-| 4 | Testes e validação integrada | Pendente |
+| Parte | Escopo                                                                 | Situação                 |
+|-------|------------------------------------------------------------------------|--------------------------|
+| 1     | Arquitetura base, domínio/política, Selectors e utilitários            | Entregue                 |
+| 1b    | Modelo de dados, CMDT, Custom Permissions e Permission Sets            | Entregue; sem deploy     |
+| 2     | US-01 e US-02: simulação, rascunho, itens, snapshot, envio e recálculo | Entregue; sem compilação |
+| 3A    | Gate de status, roteamento, decisão e reabertura (US-03/US-04)         | Entregue; sem compilação |
+| 3B    | Aplicação transacional (US-06)                                         | Entregue; sem compilação |
+| 3C    | Flow de roteamento, Screen Flows e Apex de apoio (resumo, aplicação)   | Entregue; sem deploy     |
+| 3D    | LWCs (resumo e simulador), Controller do simulador, Jest, FlexiPages, layouts, tabs e app | Pendente |
+| 3E    | Documentos finais (matriz de rastreabilidade, code review, roteiro de demo, testes e evidências) e pacote da Parte 3 | Pendente |
+| 4     | Testes Apex/Jest/Flow e validação integrada                            | Pendente                 |
 
 ## Parte 3A — entregue
 
@@ -31,20 +31,28 @@ As Partes 1, 1b, 2 e as entregas 3A e 3B foram concluídas. Nada foi compilado n
 - Lock, versão otimista e chave única do Aditivo protegem contra aplicação duplicada. OrderItems usam quantidade assinada, o que requer quantidade negativa habilitada no org.
 - Controller/DTO de aplicação adicionados. O scratch definition habilita quantidade negativa; isso ainda não foi verificado em uma org.
 
+## Parte 3C — entregue
+
+- **Record-Triggered Flow** `Roteamento_Alcada_Solicitacao` (after-save): dispara somente quando `Status__c` muda para Pendente, chama `ApprovalRoutingAction` e, no Fault Path, `ApprovalRoutingFaultAction` (registra o log técnico e desfaz o envio). Não recalcula valores e não contém IDs fixos.
+- **Screen Flows:** `Enviar_Solicitacao_Aprovacao`, `Decidir_Solicitacao_Alteracao`, `Reabrir_Solicitacao_Alteracao` e `Aplicar_Alteracao_Aprovada`. Todos usam `recordId` (Quick Action) e delegam as regras ao servidor; abrir o Flow por URL não contorna permissão, designação, segregação, ciclo ou estado.
+- **Apex de apoio:** `SubscriptionRequestSummaryService/Action/DTO` (resumo e indicadores de disponibilidade, HTML escapado), `SubscriptionApplyAction`, `TaskSelector` e `RequestSelector.selectSummaryById`.
+- **Permission Sets:** class access às novas actions e `flowAccesses` por perfil.
+- **Flow Tests declarativos:** não foram gerados. O esquema do metadado não foi verificado em org e a lógica do roteamento está em Apex, então o roteiro dos 6 casos está definido para criação no Flow Builder (e para os testes Apex que disparam o Flow por DML) na Parte 4/3E.
+
 ## Próxima etapa: implantação controlada em uma nova org
 
 1. Definir se o destino será uma Scratch Org ou uma sandbox e autorizar um alias Salesforce explicitamente.
 2. Conferir Orders e quantidade negativa; criar/confirmar os grupos públicos e associar os aprovadores.
-3. Executar o preview, implantar os metadados e resolver incompatibilidades reportadas pelo primeiro deploy.
+3. Executar o preview, implantar os metadados (incluindo os Flows) e resolver incompatibilidades reportadas pelo primeiro deploy.
 4. Atribuir Permission Sets por perfil e só então executar a carga de demonstração, se ela for desejada.
-5. Adicionar e executar os testes Apex e validar os fluxos de ponta a ponta.
+5. Validar manualmente os Flows (roteamento e Screen Flows) e, na Parte 4, executar os testes Apex e de Flow.
 
-Consulte [IMPLANTACAO_NOVA_ORG.md](IMPLANTACAO_NOVA_ORG.md) para os comandos e pré-requisitos. Como ainda não existem Flows e interface, esta versão não oferece a experiência completa de usuário final. Não usar em produção até concluir as partes pendentes, os testes e a revisão de segurança/configuração.
+Consulte [IMPLANTACAO_NOVA_ORG.md](IMPLANTACAO_NOVA_ORG.md) para os comandos e pré-requisitos. Sem LWC, FlexiPages e app (3D), os Screen Flows ainda não aparecem como botões na página: são acionados por Quick Action criada manualmente ou pela URL do Flow. Não usar em produção até concluir as partes pendentes, os testes e a revisão de segurança/configuração.
 
 ## Ainda pendente e riscos de validação
 
-- 3C, 3D, 3E e os testes/validação da Parte 4, conforme o andamento acima.
-- Validar em org o acesso a `Group`, `GroupMember` e `UserRole` com `WITH USER_MODE`; `getPopulatedFieldsAsMap()` nos writers; `FOR UPDATE` combinado com `WITH USER_MODE`; quantidade negativa; FLS de Task; e configuração dos campos de Order/OrderItem.
+- 3D, 3E e os testes/validação da Parte 4, conforme o andamento acima.
+- Validar em org o acesso a `Group`, `GroupMember` e `UserRole` com `WITH USER_MODE`; `getPopulatedFieldsAsMap()` nos writers; `FOR UPDATE` combinado com `WITH USER_MODE`; quantidade negativa; FLS de Task; configuração dos campos de Order/OrderItem; **saídas das actions invocáveis nos Screen Flows** (parâmetros de saída por `@InvocableVariable`); e o comportamento do Flow after-save que atualiza o próprio registro via Apex.
 - A `Task.OwnerId` recebe um usuário ativo membro do responsável; a decisão é autorizada pela designação e Custom Permission, não pelo dono da Task.
 - A designação considera membros diretos de grupos/filas ou usuários do papel; grupos aninhados e papéis subordinados não são expandidos.
 

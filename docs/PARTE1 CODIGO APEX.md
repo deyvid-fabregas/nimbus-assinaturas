@@ -1766,3 +1766,22 @@ public with sharing class PricebookSelector {
     }
 }
 ```
+
+
+---
+
+## Alterações posteriores aos arquivos da Parte 1
+
+Este documento descreve o código **como entregue na Parte 1**. Depois dele, estes arquivos receberam acréscimos (sem mudar assinaturas existentes):
+
+| Arquivo | Acréscimo | Entrega |
+|---|---|---|
+| `SubscriptionConstants` | códigos de erro e constantes (Partes 2, 3A, 3B) | 2, 3A, 3B |
+| `PricebookSelector` | `selectActiveEntriesForPricebooks` | 2 |
+| `RequestItemSelector` | `countByRequestIds` | 2 |
+| `RequestStateMachine` | `requiresAuthorizedService`, `isCompensationTransition` | 3A |
+| `SubscriptionClock` | `now()` (injetável em teste) | 3A |
+| `PricebookResolver` (criado na Parte 2) | `resolveEntries` | 3B |
+| `RequestSelector` | `selectSummaryById` | 3C |
+
+Consulte `ARQUITETURA.md` (catálogo por entrega) e `DECISOES_E_LIMITACOES.md` para o detalhe.

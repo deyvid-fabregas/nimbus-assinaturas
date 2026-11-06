@@ -203,11 +203,24 @@ Orçamento (200 solicitações): roteamento ≤ 8 SOQL / 5 DML; decisão 5 SOQL 
 | Escrita isolada | `ContractApplyWriter` (itens, contrato, Aditivo, Order/OrderItem) |
 | Alterados | `PricebookResolver.resolveEntries`, `SubscriptionConstants` (+3), Permission Sets (class access + leitura de Order/OrderItem), `project-scratch-def.json` (quantidade negativa) |
 
+### Entregue na Parte 3 — Entrega 3C (Flows e apoio Apex)
+
+| Camada | Componentes |
+|---|---|
+| Record-Triggered Flow | `Roteamento_Alcada_Solicitacao` (after-save, entrada: `Status__c` muda para Pendente) → `ApprovalRoutingAction`; Fault Path → `ApprovalRoutingFaultAction` |
+| Screen Flows | `Enviar_Solicitacao_Aprovacao`, `Decidir_Solicitacao_Alteracao`, `Reabrir_Solicitacao_Alteracao`, `Aplicar_Alteracao_Aprovada` (todos com `recordId`) |
+| Apex de apoio | `SubscriptionRequestSummaryService/DTO/Action` (resumo e indicadores `can*`), `SubscriptionApplyAction`, `TaskSelector`; `RequestSelector.selectSummaryById`; `SubscriptionApplyController.runApply` |
+| Acesso | `classAccesses` e `flowAccesses` por Permission Set |
+
+**Ownership dos campos alterados pelo roteamento (US-03):** `Nivel_Aprovacao__c`, `Ciclo_Aprovacao__c` e, na aprovação automática, `Status__c`/`Data_Decisao__c` pertencem ao roteamento (`ApprovalRoutingService`, chamado pelo Flow) e são gravados por `AuthorizedSystemWriter`. O Flow só lê `MRR_*`/`Variacao_*` (escritor único: Trigger de itens).
+
+**Responsabilidade por camada (jornada):** LWC/Screen Flow (apresentação e coleta) → Action invocável (conversão de entrada/saída, sem regra) → Service (regras, locks, transações) → Domain/Policy (regras puras) → Selector (SOQL em `USER_MODE`) → Writers isolados (efeitos de operações já autorizadas).
+
 ### Planejado (próximas partes)
 
 | Parte | Entregas |
 |---|---|
-| 3 | Invocables (`ApprovalRoutingAction`, `SubscriptionDecisionAction`), `SubscriptionDecisionService`, `SubscriptionApplyService`, Controllers (devolvendo `SubscriptionChangeResultDTO.failure`, nunca lançando), Flows, FlexiPage, LWC; US-03 a US-06 |
+| 3D | LWC `subscriptionRequestSummary` (reaproveita `SubscriptionRequestSummaryService`) e simulador, `SubscriptionChangeController` (devolvendo `SubscriptionChangeResultDTO.failure`, nunca lançando), Jest, FlexiPages, layouts, tabs e app |\n| 3E | Documentos finais e pacote da Parte 3 |
 | 4 | Testes Apex/Jest e demais documentos |
 
 ---|---|

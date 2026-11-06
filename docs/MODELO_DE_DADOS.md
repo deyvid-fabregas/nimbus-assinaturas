@@ -81,3 +81,10 @@ Para segregar por nível, crie um Permission Set por Custom Permission.
 * `Assinatura_Vendedor`: class access a `SubscriptionApplyController`. **Nenhuma** permissão de escrita nova (a aplicação grava por
   `ContractApplyWriter`; ver `DECISOES_E_LIMITACOES.md`).
 * Scratch org: `orderSettings.enableNegativeQuantity = true` (necessário para OrderItem de redução/remoção).
+
+## Atualização (Parte 3 — 3C)
+
+* **Flows** (`force-app/main/default/flows`): `Roteamento_Alcada_Solicitacao` (record-triggered), `Enviar_Solicitacao_Aprovacao`, `Decidir_Solicitacao_Alteracao`, `Reabrir_Solicitacao_Alteracao`, `Aplicar_Alteracao_Aprovada` (Screen Flows).
+* **`flowAccesses`:** `Assinatura_Vendedor` (enviar, reabrir, aplicar), `Assinatura_Aprovador` (decidir, reabrir), `Assinatura_Administrador` (os quatro). O Flow de roteamento é automático (sem acesso por usuário).
+* **Class access** novo: `SubscriptionRequestSummaryAction` (os três sets) e `SubscriptionApplyAction` (Vendedor e Administrador).
+* Sem novos objetos ou campos nesta entrega.
