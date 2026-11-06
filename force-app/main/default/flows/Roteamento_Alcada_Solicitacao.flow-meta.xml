@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Route_Approval</name>
+        <label>Rotear aprovação</label>
+        <locationX>176</locationX>
+        <locationY>323</locationY>
+        <actionName>ApprovalRoutingAction</actionName>
+        <actionType>apex</actionType>
+        <faultConnector>
+            <targetReference>Compensate_On_Fault</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>requestId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>ApprovalRoutingAction</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Compensate_On_Fault</name>
+        <label>Fault: registrar log e desfazer envio</label>
+        <locationX>440</locationX>
+        <locationY>431</locationY>
+        <actionName>ApprovalRoutingFaultAction</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>requestId</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>errorMessage</name>
+            <value>
+                <elementReference>$Flow.FaultMessage</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>ApprovalRoutingFaultAction</nameSegment>
+        <versionSegment>1</versionSegment>
+    </actionCalls>
+    <apiVersion>62.0</apiVersion>
+    <description>US-03. After-save: dispara somente quando Status__c MUDA para Pendente. Delega a classificacao (matriz em Matriz_Alcada__mdt), o ciclo, a Task e a aprovacao automatica ao ApprovalRoutingAction. Nao recalcula valores financeiros (so le). Fault Path: registra Log_Tecnico__c e desfaz o envio.</description>
+    <environments>Default</environments>
+    <interviewLabel>Roteamento de alçada {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Roteamento de Alçada da Solicitação</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Route_Approval</targetReference>
+        </connector>
+        <doesRequireRecordChangedToMeetCriteria>true</doesRequireRecordChangedToMeetCriteria>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Pendente</stringValue>
+            </value>
+        </filters>
+        <object>Solicitacao_Alteracao__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>
