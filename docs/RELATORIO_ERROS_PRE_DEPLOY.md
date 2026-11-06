@@ -26,13 +26,24 @@ Deploy de validação falhou com 21 erros: `Historico_Decisao__c` já existia co
 4. `lst:dynamicRelatedList` rejeitado → `force:relatedListContainer`.
 5. Jest: pasta `__tests__` ausente; eslint não usado removido; teste de `recordId` nulo corrigido (`mount(null)`).
 
+## 3b. Erros encontrados ao usar a org (validação manual de 06/11/2026)
+
+| # | Sintoma | Causa | Correção |
+|---|---|---|---|
+| 1 | Simulador não aparecia no registro | Usuário no app Sales / página padrão | Abrir pelo app **Assinaturas**; `actionOverrides` Flexipage (View) em `Contrato_Assinatura__c` e `Solicitacao_Alteracao__c` |
+| 2 | "Informe o contrato da alteração" ao simular | O Aura entregava `SubscriptionChangeRequestDTO` com todos os campos nulos ao Apex | Novas ações `simulateJson` e `saveDraftJson` em `SubscriptionChangeController` (recebem `requestJson`, `JSON.deserialize` no servidor); LWC envia `JSON.stringify`. Teste `SubscriptionChangeJsonTest`; Jest atualizado |
+| 3 | "Você não tem o nível de acesso necessário" ao clicar em **Decidir** com o aprovador | Nenhum Permission Set tinha a permissão de sistema **Executar fluxos** (`RunFlow`) | `userPermissions` `RunFlow` em `Assinatura_Administrador`, `Assinatura_Aprovador` e `Assinatura_Vendedor` |
+| 4 | Usuário principal sem permissões de aprovação | Só tinha `Assinatura_Administrador` | Atribuídos `Assinatura_Aprovador` e `Assinatura_Vendedor` e os 3 grupos de aprovadores |
+
+Nenhuma regra de negócio foi alterada: as correções são de interface, transporte de parâmetros e permissões. As ações antigas `simulate` e `saveDraft` continuam existindo. Evidência visual em [evidencias/jornada-validada.md](evidencias/jornada-validada.md).
+
 ## 4. Conformidade com o PDF do Nível 3
 
 Conferência feita contra o resumo do PDF. **Nenhuma regra de negócio foi alterada**: matriz de alçada, máquina de estados, HALF_UP, nomes de objetos/classes/triggers e papéis permanecem como especificados. Itens a destacar com honestidade:
 
 - **Possíveis desvios de modelagem (a validar com o PDF):** `Produto__c` ficou opcional (`SetNull`); o administrador pode editar `Log_Tecnico__c` (necessário para exclusão); as listas do contrato usam `relatedListContainer` em vez de componentes dinâmicos separados.
 - Em `SubscriptionConstants` foi removido o construtor privado vazio (única linha executável, deixava a classe em 0%); sem efeito em regra.
-- **Metas do PDF ainda não cumpridas** (não são mudança de regra, são pendências): 90% de cobertura por classe (hoje 52 de 64 ≥ 90%; faltam 12), 6 Flow Tests, Code Analyzer, capturas da FlexiPage.
+- **Metas do PDF ainda não cumpridas** (não são mudança de regra, são pendências): 90% de cobertura por classe (hoje 52 de 64 ≥ 90%; faltam 12), 6 Flow Tests, Code Analyzer, capturas da FlexiPage dos estados Rejeitada/Expirada e do simulador (os demais estados estão em `evidencias/jornada-validada.md`).
 - **Ajustes feitos para viabilizar testes (sem mudar regra):** em `ContractApplyWriter` a falha simulada de teste passou a provocar uma falha real de DML (`insert new OrderItem(...)`); em `SubscriptionApplyService` a classe e o método `apply` passaram a `virtual` para permitir dublê de teste. A lógica de aplicação, idempotência e rollback não mudou.
 - As alterações em Apex nos commits de correção foram apenas de nomes (enum qualificado, variáveis), sem mudar lógica. O agente de testes foi interrompido e não deixou registro de bugs de produção corrigidos; ao retomar, comparar o código com o repositório para confirmar.
 
