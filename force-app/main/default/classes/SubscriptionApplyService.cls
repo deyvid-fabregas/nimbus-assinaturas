@@ -21,7 +21,7 @@
  *              Limites (1 solicitacao, ate 200 itens): ~12 SOQL e ~10 DML, sem SOQL/DML em loop. Contratos com milhares de
  *              itens exigiriam Queueable/Batch (ver RESPOSTAS_CODE_REVIEW.md).
  */
-public with sharing class SubscriptionApplyService {
+public virtual with sharing class SubscriptionApplyService {
     private final RequestSelector requestSelector = new RequestSelector();
     private final ContractSelector contractSelector = new ContractSelector();
     private final ContractItemSelector contractItemSelector = new ContractItemSelector();
@@ -30,7 +30,7 @@ public with sharing class SubscriptionApplyService {
     private final AdditiveSelector additives = new AdditiveSelector();
     private final PricebookResolver pricebookResolver = new PricebookResolver();
 
-    public SubscriptionApplyResultDTO apply(Id requestId) {
+    public virtual SubscriptionApplyResultDTO apply(Id requestId) {
         if (requestId == null) {
             return SubscriptionApplyResultDTO.failure(null, SubscriptionConstants.ERR_ENTRADA_INVALIDA, 'Informe a solicitação a aplicar.');
         }

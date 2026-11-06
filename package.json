@@ -1,0 +1,13 @@
+{
+  "name": "nimbus-assinaturas",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Nimbus Assinaturas - testes Jest dos LWC",
+  "scripts": {
+    "test": "sfdx-lwc-jest",
+    "test:unit:coverage": "sfdx-lwc-jest --coverage"
+  },
+  "devDependencies": {
+    "@salesforce/sfdx-lwc-jest": "^7.0.0"
+  }
+}

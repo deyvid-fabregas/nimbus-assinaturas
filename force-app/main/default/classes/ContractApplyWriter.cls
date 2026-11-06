@@ -95,7 +95,7 @@ public without sharing class ContractApplyWriter {
                 beforeFailure.add(safeItems[i]);
             }
             insert beforeFailure; // NOPMD
-            throw new DmlException('Falha simulada na criação do OrderItem ' + failAtOrderItem + ' (somente teste).');
+            insert new OrderItem(OrderId = safeOrder.Id); // NOPMD - falha real de DML induzida (campos obrigatorios ausentes)
         }
         insert safeItems; // NOPMD - modo sistema intencional (ver cabecalho)
         return safeOrder.Id;

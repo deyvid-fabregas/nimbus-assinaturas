@@ -1,0 +1,126 @@
+<template>
+    <lightning-card title="Resumo da solicitação" icon-name="standard:contract">
+        <div class="slds-p-horizontal_medium" aria-busy={isLoading}>
+            <template lwc:if={isLoading}>
+                <lightning-spinner alternative-text="Carregando resumo" size="small"></lightning-spinner>
+            </template>
+
+            <template lwc:if={errorMessage}>
+                <div class="slds-text-color_error" role="alert" data-id="error">{errorMessage}</div>
+            </template>
+
+            <template lwc:if={hasSummary}>
+                <div class="slds-m-bottom_small" role="status" aria-live="polite" data-id="status">
+                    <span class="slds-text-title">Status</span>
+                    <lightning-badge label={summary.status} class="slds-m-left_x-small"></lightning-badge>
+                    <span class="slds-m-left_small slds-text-title">Ciclo</span>
+                    <span class="slds-m-left_x-small" data-id="cycle">{summary.cycle}</span>
+                </div>
+
+                <dl class="slds-grid slds-wrap slds-m-bottom_small">
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Solicitação</dt>
+                    <dd class="slds-col slds-size_2-of-3" data-id="name">{summary.name}</dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Contrato</dt>
+                    <dd class="slds-col slds-size_2-of-3">{summary.contractName}</dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Plano atual</dt>
+                    <dd class="slds-col slds-size_2-of-3">{summary.currentPlanName}</dd>
+                    <template lwc:if={proposedPlanChanged}>
+                        <dt class="slds-col slds-size_1-of-3 slds-text-title">Plano proposto</dt>
+                        <dd class="slds-col slds-size_2-of-3" data-id="proposed-plan">{summary.proposedPlanName}</dd>
+                    </template>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">MRR atual</dt>
+                    <dd class="slds-col slds-size_2-of-3">
+                        <lightning-formatted-number value={summary.baseMrr} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+                    </dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">MRR proposto</dt>
+                    <dd class="slds-col slds-size_2-of-3">
+                        <lightning-formatted-number value={summary.proposedMrr} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+                    </dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Variação</dt>
+                    <dd class="slds-col slds-size_2-of-3">
+                        <lightning-formatted-number value={summary.absoluteVariation} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+                        <template lwc:if={hasPercentVariation}>
+                            (<lightning-formatted-number value={percentValue} format-style="percent" maximum-fraction-digits="2"></lightning-formatted-number>)
+                        </template>
+                    </dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Nível de aprovação</dt>
+                    <dd class="slds-col slds-size_2-of-3" data-id="level">{summary.approvalLevel}</dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Aprovador esperado</dt>
+                    <dd class="slds-col slds-size_2-of-3">{summary.expectedResponsible}</dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Solicitante</dt>
+                    <dd class="slds-col slds-size_2-of-3">{summary.requesterName}</dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Efetivação</dt>
+                    <dd class="slds-col slds-size_2-of-3">
+                        <lightning-formatted-date-time value={summary.effectiveDate} year="numeric" month="2-digit" day="2-digit" time-zone="UTC"></lightning-formatted-date-time>
+                    </dd>
+                    <dt class="slds-col slds-size_1-of-3 slds-text-title">Justificativa</dt>
+                    <dd class="slds-col slds-size_2-of-3">{summary.justification}</dd>
+                    <template lwc:if={hasRejectionReason}>
+                        <dt class="slds-col slds-size_1-of-3 slds-text-title">Motivo da rejeição</dt>
+                        <dd class="slds-col slds-size_2-of-3" data-id="rejection">{summary.rejectionReason}</dd>
+                    </template>
+                </dl>
+
+                <template lwc:if={hasLines}>
+                    <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-m-bottom_small" data-id="lines">
+                        <caption class="slds-assistive-text">Itens da solicitação</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Produto</th>
+                                <th scope="col">Ação</th>
+                                <th scope="col">Qtd. atual</th>
+                                <th scope="col">Qtd. nova</th>
+                                <th scope="col">Impacto MRR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={lines} for:item="line">
+                                <tr key={line.key}>
+                                    <th scope="row">{line.productName}</th>
+                                    <td>{line.action}</td>
+                                    <td>{line.currentQuantity}</td>
+                                    <td>{line.newQuantity}</td>
+                                    <td class={line.deltaClass}>
+                                        <lightning-formatted-number value={line.deltaMrr} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+
+                <div role="group" aria-label="Ações da solicitação" class="slds-m-bottom_small">
+                    <template for:each={actions} for:item="action">
+                        <lightning-button
+                            key={action.key}
+                            class="slds-m-right_x-small"
+                            label={action.label}
+                            variant={action.variant}
+                            data-action={action.key}
+                            onclick={handleAction}
+                        ></lightning-button>
+                    </template>
+                </div>
+                <template lwc:if={showUnavailableReason}>
+                    <p class="slds-text-color_weak" data-id="reason">{summary.unavailableReason}</p>
+                </template>
+            </template>
+
+            <template lwc:if={isFlowOpen}>
+                <section role="dialog" aria-modal="true" aria-label={flowTitle} class="slds-box slds-m-vertical_small" data-id="flow-panel">
+                    <div class="slds-grid slds-grid_align-spread slds-m-bottom_small">
+                        <h3 class="slds-text-heading_small">{flowTitle}</h3>
+                        <lightning-button-icon
+                            icon-name="utility:close"
+                            variant="bare"
+                            alternative-text="Fechar"
+                            onclick={handleCloseFlow}
+                            data-id="close-flow"
+                        ></lightning-button-icon>
+                    </div>
+                    <lightning-flow flow-api-name={activeFlow.apiName} flow-input-variables={flowInputs} onstatuschange={handleFlowStatusChange}></lightning-flow>
+                </section>
+            </template>
+        </div>
+    </lightning-card>
+</template>

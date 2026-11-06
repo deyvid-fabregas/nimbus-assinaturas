@@ -1,0 +1,143 @@
+<template>
+    <lightning-card title="Simulador de alteração contratual" icon-name="standard:custom">
+        <div class="slds-p-horizontal_medium" aria-busy={isBusy}>
+            <template lwc:if={contextError}>
+                <div class="slds-text-color_error" role="alert" data-id="context-error">{contextError}</div>
+            </template>
+
+            <template lwc:if={hasContext}>
+                <p class="slds-m-bottom_small" data-id="contract-info">
+                    Contrato <strong>{context.contractName}</strong> ({context.contractStatus}) &middot; plano atual:
+                    {context.currentPlanName}
+                </p>
+
+                <form onsubmit={handleSimulate} aria-label="Dados da simulação">
+                    <lightning-combobox
+                        name="plan"
+                        label="Plano proposto"
+                        value={proposedPlanId}
+                        options={planOptions}
+                        onchange={handlePlanChange}
+                        data-id="plan"
+                    ></lightning-combobox>
+                    <lightning-input type="date" name="effectiveDate" label="Data de efetivação" value={effectiveDate} onchange={handleDateChange} data-id="date"></lightning-input>
+
+                    <fieldset class="slds-m-top_small">
+                        <legend class="slds-form-element__legend slds-form-element__label">Itens do contrato</legend>
+                        <template lwc:if={hasItems}>
+                            <template for:each={items} for:item="item">
+                                <div key={item.productId} class="slds-grid slds-grid_vertical-align-end slds-m-bottom_x-small" data-id="item-row">
+                                    <lightning-input
+                                        class="slds-col"
+                                        type="number"
+                                        min="0"
+                                        step="1"
+                                        label={item.productName}
+                                        value={item.newQuantity}
+                                        data-product={item.productId}
+                                        data-id="quantity"
+                                        onchange={handleQuantityChange}
+                                    ></lightning-input>
+                                    <template lwc:if={item.added}>
+                                        <lightning-button-icon
+                                            class="slds-m-left_x-small"
+                                            icon-name="utility:delete"
+                                            alternative-text="Remover produto adicionado"
+                                            data-product={item.productId}
+                                            data-id="remove-added"
+                                            onclick={handleRemoveAdded}
+                                        ></lightning-button-icon>
+                                    </template>
+                                </div>
+                            </template>
+                        </template>
+                        <template lwc:if={hasProductOptions}>
+                            <div class="slds-grid slds-grid_vertical-align-end">
+                                <lightning-combobox
+                                    class="slds-col"
+                                    name="addProduct"
+                                    label="Adicionar produto"
+                                    value={addedProductId}
+                                    options={productOptions}
+                                    onchange={handleAddedProductChange}
+                                    data-id="add-product"
+                                ></lightning-combobox>
+                                <lightning-button class="slds-m-left_x-small" label="Adicionar" onclick={handleAddProduct} data-id="add-button"></lightning-button>
+                            </div>
+                        </template>
+                    </fieldset>
+
+                    <lightning-textarea name="justification" label="Justificativa" value={justification} onchange={handleJustificationChange} data-id="justification"></lightning-textarea>
+                </form>
+
+                <div class="slds-m-top_small" role="group" aria-label="Ações do simulador">
+                    <lightning-button label="Simular" variant="brand" disabled={disableActions} onclick={handleSimulate} data-id="simulate"></lightning-button>
+                    <lightning-button class="slds-m-left_x-small" label="Salvar rascunho" disabled={disableActions} onclick={handleSave} data-id="save"></lightning-button>
+                </div>
+            </template>
+
+            <div class="slds-m-top_small" aria-live="polite" role="status">
+                <template lwc:if={feedback}>
+                    <p class="slds-text-color_success" data-id="feedback">{feedback}</p>
+                </template>
+                <template lwc:if={resultIsError}>
+                    <p class="slds-text-color_error" role="alert" data-id="result-error">{result.message}</p>
+                </template>
+                <template lwc:if={resultIsBlocked}>
+                    <p class="slds-text-color_error" role="alert" data-id="result-blocked">{result.blockMessage}</p>
+                </template>
+            </div>
+
+            <template lwc:if={hasResult}>
+                <template lwc:if={resultIsOk}>
+                    <dl class="slds-grid slds-wrap slds-m-top_small" data-id="result">
+                        <dt class="slds-col slds-size_1-of-2 slds-text-title">MRR atual</dt>
+                        <dd class="slds-col slds-size_1-of-2">
+                            <lightning-formatted-number value={result.baseMrr} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+                        </dd>
+                        <dt class="slds-col slds-size_1-of-2 slds-text-title">MRR proposto</dt>
+                        <dd class="slds-col slds-size_1-of-2" data-id="proposed-mrr">
+                            <lightning-formatted-number value={result.proposedMrr} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+                        </dd>
+                        <dt class="slds-col slds-size_1-of-2 slds-text-title">Variação</dt>
+                        <dd class="slds-col slds-size_1-of-2">
+                            <lightning-formatted-number value={result.absoluteVariation} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+                            <template lwc:if={hasPercent}>
+                                (<lightning-formatted-number value={percentValue} format-style="percent" maximum-fraction-digits="2"></lightning-formatted-number>)
+                            </template>
+                        </dd>
+                        <dt class="slds-col slds-size_1-of-2 slds-text-title">Nível previsto</dt>
+                        <dd class="slds-col slds-size_1-of-2" data-id="level">{result.approvalLevel}</dd>
+                        <dt class="slds-col slds-size_1-of-2 slds-text-title">Responsável</dt>
+                        <dd class="slds-col slds-size_1-of-2">{result.responsibleName}</dd>
+                    </dl>
+                    <template lwc:if={hasResultLines}>
+                        <table class="slds-table slds-table_bordered slds-m-top_small" data-id="result-lines">
+                            <caption class="slds-assistive-text">Linhas calculadas</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">Produto</th>
+                                    <th scope="col">Ação</th>
+                                    <th scope="col">Qtd. nova</th>
+                                    <th scope="col">Impacto MRR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={resultLines} for:item="line">
+                                    <tr key={line.key}>
+                                        <th scope="row">{line.productName}</th>
+                                        <td>{line.action}</td>
+                                        <td>{line.newQuantity}</td>
+                                        <td>
+                                            <lightning-formatted-number value={line.deltaMrr} format-style="currency" currency-code="BRL"></lightning-formatted-number>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>
