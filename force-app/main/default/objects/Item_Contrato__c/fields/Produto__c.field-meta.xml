@@ -5,8 +5,8 @@
     <referenceTo>Product2</referenceTo>
     <relationshipLabel>Itens de Contrato</relationshipLabel>
     <relationshipName>Itens_Contrato</relationshipName>
-    <deleteConstraint>Restrict</deleteConstraint>
-    <required>true</required>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <required>false</required>
     <trackTrending>false</trackTrending>
     <type>Lookup</type>
 </CustomField>
