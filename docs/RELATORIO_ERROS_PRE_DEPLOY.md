@@ -35,3 +35,5 @@ Conferência feita contra o resumo do PDF. **Nenhuma regra de negócio foi alter
 - **Metas do PDF ainda não cumpridas** (não são mudança de regra, são pendências): 90% de cobertura por classe (hoje 52 de 64 ≥ 90%; faltam 12), 6 Flow Tests, Code Analyzer, capturas da FlexiPage.
 - **Ajustes feitos para viabilizar testes (sem mudar regra):** em `ContractApplyWriter` a falha simulada de teste passou a provocar uma falha real de DML (`insert new OrderItem(...)`); em `SubscriptionApplyService` a classe e o método `apply` passaram a `virtual` para permitir dublê de teste. A lógica de aplicação, idempotência e rollback não mudou.
 - As alterações em Apex nos commits de correção foram apenas de nomes (enum qualificado, variáveis), sem mudar lógica. O agente de testes foi interrompido e não deixou registro de bugs de produção corrigidos; ao retomar, comparar o código com o repositório para confirmar.
+
+- Os testes Jest dos LWC foram movidos de orce-app/main/default/lwc/*/__tests__ para 	est/lwc/ (e jest.config.js ganhou 	estMatch), para o VS Code parar de marcar LWC1702 no import 'lwc'. Nenhuma regra alterada; 28 testes e 98,29% mantidos.
