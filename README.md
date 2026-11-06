@@ -2,7 +2,7 @@
 
 Projeto Salesforce em Apex e Flow para simulação, solicitação, aprovação por alçada e aplicação de alterações em contratos de assinatura.
 
-> **Status:** Partes 1, 1b, 2, 3A, 3B e 3C implementadas (Apex, metadados, Flow de roteamento e Screen Flows). Ainda não há compilação, testes nem implantação validados em uma org. Interface (LWC/FlexiPage), testes e documentos finais continuam pendentes; consulte [docs/STATUS.md](docs/STATUS.md).
+> **Status (06/11/2026):** implantado com sucesso na org `nimbus-org`, incluindo LWC, FlexiPages e app. Testes Apex: 58 aprovados, cobertura da execução 86%, **meta de 90% por classe ainda não atingida** (33 de 64 classes). Jest: 28 testes, 98,29%. Validação visual da FlexiPage, Flow Tests e Code Analyzer pendentes. Veja [docs/CONTINUAR_DAQUI.md](docs/CONTINUAR_DAQUI.md) e [docs/STATUS.md](docs/STATUS.md).
 
 ## Estrutura
 
@@ -18,7 +18,7 @@ Projeto Salesforce em Apex e Flow para simulação, solicitação, aprovação p
 
 Simulação e rascunho (Apex) → envio (Screen Flow) → roteamento por alçada (Flow + Apex, Task ou aprovação automática) → decisão (Screen Flow + `SubscriptionDecisionService`) → reabertura ou aplicação transacional (Aditivo + Order, atômica e idempotente).
 
-A tela de simulação (LWC), as Lightning Record Pages e o app chegam na entrega 3D.
+A tela de simulação (LWC), as Lightning Record Pages e o app `Assinaturas` já foram implantados (entrega 3D).
 
 ## Documentação
 
@@ -27,6 +27,12 @@ A tela de simulação (LWC), as Lightning Record Pages e o app chegam na entrega
 - [docs/ARQUITETURA.md](docs/ARQUITETURA.md): camadas, responsabilidades e catálogo de componentes
 - [docs/MODELO_DE_DADOS.md](docs/MODELO_DE_DADOS.md): objetos, Custom Metadata, Permission Sets e acessos a classes/Flows
 - [docs/DECISOES_E_LIMITACOES.md](docs/DECISOES_E_LIMITACOES.md): decisões e limitações conhecidas
+- [docs/CONTINUAR_DAQUI.md](docs/CONTINUAR_DAQUI.md): onde paramos e o que falta
+- [docs/COMO_USAR_A_ORG.md](docs/COMO_USAR_A_ORG.md): usar a org e criar planos
+- [docs/O_QUE_FOI_ADICIONADO.md](docs/O_QUE_FOI_ADICIONADO.md): o que foi adicionado e para que serve
+- [docs/SEGURANCA.md](docs/SEGURANCA.md): segurança da org (verificação parcial)
+- [docs/RELATORIO_ERROS_PRE_DEPLOY.md](docs/RELATORIO_ERROS_PRE_DEPLOY.md): erros antes do deploy, correções e conformidade com o PDF
+- [docs/evidencias/cobertura-apex.md](docs/evidencias/cobertura-apex.md): cobertura Apex por classe
 - [docs/PARTE1 CODIGO APEX.md](docs/PARTE1%20CODIGO%20APEX.md): documentação da Parte 1
 
 ## Início
