@@ -6,11 +6,11 @@ Data: 06/11/2026. Org de trabalho: alias `nimbus-org` (usuário `deyvidfabregas4
 - Deploy completo de `force-app` na `nimbus-org`: **Succeeded** (Apex, Flows, objetos, Permission Sets, LWC, FlexiPages, app).
 - LWC `subscriptionChangeSimulator` e `subscriptionRequestSummary`; Jest: 28 testes, 98,29% de statements.
 - Duas FlexiPages existem na org: `Solicitacao_Alteracao_Record_Page` e `Contrato_Assinatura_Record_Page`.
-- Testes Apex: 58 passando, 0 falhas, cobertura da execução 86%.
+- Testes Apex: 77 passando, 0 falhas, cobertura da execução 92%; 52 de 64 classes em ≥ 90%.
 - Documentos novos e atualizados (ver abaixo).
 
 ## Falta fazer (em ordem)
-1. **Cobertura Apex ≥ 90% por classe.** 31 classes abaixo (tabela em [evidencias/cobertura-apex.md](evidencias/cobertura-apex.md)). Prioridade:
+1. **Cobertura Apex ≥ 90% por classe.** 12 classes abaixo:  [evidencias/cobertura-apex.md](evidencias/cobertura-apex.md)). Prioridade:
    - 0%: `SubscriptionRequestSummaryService/Action/Controller/DTO`, `TaskSelector`, `DecisionHistorySelector`, `SubscriptionConstants`.
    - 40–65%: `PricebookSelector`, `PlanSelector`, `AdditiveSelector`, `ContractItemSelector`, `ItemAlteracaoHandler`, `RequestSnapshotService`, `ItemContratoHandler`.
    - 70–89%: demais selectors, `SubscriptionConfig`, `RequestItemService`, `ChangePlanner`, `SubscriptionDecisionService`, `ApprovalRoutingService` etc.

@@ -31,6 +31,7 @@ Deploy de validação falhou com 21 erros: `Historico_Decisao__c` já existia co
 Conferência feita contra o resumo do PDF. **Nenhuma regra de negócio foi alterada**: matriz de alçada, máquina de estados, HALF_UP, nomes de objetos/classes/triggers e papéis permanecem como especificados. Itens a destacar com honestidade:
 
 - **Possíveis desvios de modelagem (a validar com o PDF):** `Produto__c` ficou opcional (`SetNull`); o administrador pode editar `Log_Tecnico__c` (necessário para exclusão); as listas do contrato usam `relatedListContainer` em vez de componentes dinâmicos separados.
-- **Metas do PDF ainda não cumpridas** (não são mudança de regra, são pendências): 90% de cobertura por classe (hoje 33 de 64 ≥ 90%), 6 Flow Tests, Code Analyzer, capturas da FlexiPage.
+- Em `SubscriptionConstants` foi removido o construtor privado vazio (única linha executável, deixava a classe em 0%); sem efeito em regra.
+- **Metas do PDF ainda não cumpridas** (não são mudança de regra, são pendências): 90% de cobertura por classe (hoje 52 de 64 ≥ 90%; faltam 12), 6 Flow Tests, Code Analyzer, capturas da FlexiPage.
 - **Ajustes feitos para viabilizar testes (sem mudar regra):** em `ContractApplyWriter` a falha simulada de teste passou a provocar uma falha real de DML (`insert new OrderItem(...)`); em `SubscriptionApplyService` a classe e o método `apply` passaram a `virtual` para permitir dublê de teste. A lógica de aplicação, idempotência e rollback não mudou.
 - As alterações em Apex nos commits de correção foram apenas de nomes (enum qualificado, variáveis), sem mudar lógica. O agente de testes foi interrompido e não deixou registro de bugs de produção corrigidos; ao retomar, comparar o código com o repositório para confirmar.

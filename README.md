@@ -2,7 +2,7 @@
 
 Projeto Salesforce em Apex e Flow para simulação, solicitação, aprovação por alçada e aplicação de alterações em contratos de assinatura.
 
-> **Status (06/11/2026):** implantado com sucesso na org `nimbus-org`, incluindo LWC, FlexiPages e app. Testes Apex: 58 aprovados, cobertura da execução 86%, **meta de 90% por classe ainda não atingida** (33 de 64 classes). Jest: 28 testes, 98,29%. Validação visual da FlexiPage, Flow Tests e Code Analyzer pendentes. Veja [docs/CONTINUAR_DAQUI.md](docs/CONTINUAR_DAQUI.md) e [docs/STATUS.md](docs/STATUS.md).
+> **Status (06/11/2026):** implantado com sucesso na org `nimbus-org`, incluindo LWC, FlexiPages e app. Testes Apex: 77 aprovados, 0 falhas, cobertura da execução 92%, **meta de 90% por classe atingida em 52 de 64 classes** (faltam 12). Jest: 28 testes, 98,29%. Validação visual da FlexiPage, Flow Tests e Code Analyzer pendentes. Veja [docs/CONTINUAR_DAQUI.md](docs/CONTINUAR_DAQUI.md) e [docs/STATUS.md](docs/STATUS.md).
 
 ## Estrutura
 
