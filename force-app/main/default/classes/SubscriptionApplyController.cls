@@ -7,8 +7,13 @@ public with sharing class SubscriptionApplyController {
 
     @AuraEnabled
     public static SubscriptionApplyResultDTO apply(Id requestId) {
+        return runApply(new SubscriptionApplyService(), requestId);
+    }
+
+    /** Executa a aplicacao garantindo que nenhuma excecao escape (reuso pela SubscriptionApplyAction). */
+    public static SubscriptionApplyResultDTO runApply(SubscriptionApplyService service, Id requestId) {
         try {
-            return new SubscriptionApplyService().apply(requestId);
+            return service.apply(requestId);
         } catch (Exception unexpected) {
             Id logId = TechnicalLogger.log('SubscriptionApplyController', 'apply', requestId, unexpected);
             return SubscriptionApplyResultDTO.failure(
