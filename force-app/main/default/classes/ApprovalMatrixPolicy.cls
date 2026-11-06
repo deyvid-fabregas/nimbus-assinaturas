@@ -82,7 +82,7 @@ public with sharing class ApprovalMatrixPolicy {
         public String responsibleName;
 
         public Boolean requiresHumanApproval() {
-            return !blocked && level != Level.AUTOMATICA;
+            return !blocked && level != ApprovalMatrixPolicy.Level.AUTOMATICA;
         }
 
         /** Rotulo da picklist Solicitacao_Alteracao__c.Nivel_Aprovacao__c (null quando bloqueada). */
@@ -98,12 +98,12 @@ public with sharing class ApprovalMatrixPolicy {
         Decimal maxVariationPercent
     ) {
         MrrCalculator.Variation variation = MrrCalculator.compute(baseMrr, proposedMrr);
-        Direction direction = variation.absolute < 0 ? Direction.REDUCAO : Direction.AUMENTO;
+        Direction direction = variation.absolute < 0 ? ApprovalMatrixPolicy.Direction.REDUCAO : ApprovalMatrixPolicy.Direction.AUMENTO;
         Decimal percentMagnitude = variation.percent == null ? null : Math.abs(variation.percent);
         Decimal absoluteMagnitude = Math.abs(variation.absolute);
 
-        Level byPercent = levelFor(direction, Criterion.PERCENTUAL, percentMagnitude, rules);
-        Level byAbsolute = levelFor(direction, Criterion.ABSOLUTO, absoluteMagnitude, rules);
+        Level byPercent = levelFor(direction, ApprovalMatrixPolicy.Criterion.PERCENTUAL, percentMagnitude, rules);
+        Level byAbsolute = levelFor(direction, ApprovalMatrixPolicy.Criterion.ABSOLUTO, absoluteMagnitude, rules);
         if (byPercent == null && byAbsolute == null) {
             throw new SubscriptionException(
                 SubscriptionConstants.ERR_ALCADA_AUSENTE,
@@ -112,8 +112,8 @@ public with sharing class ApprovalMatrixPolicy {
         }
 
         Level required = maxOf(byPercent, byAbsolute);
-        if (direction == Direction.REDUCAO && required == Level.AUTOMATICA) {
-            required = Level.GERENTE;
+        if (direction == ApprovalMatrixPolicy.Direction.REDUCAO && required == ApprovalMatrixPolicy.Level.AUTOMATICA) {
+            required = ApprovalMatrixPolicy.Level.GERENTE;
         }
 
         Result result = new Result();
@@ -125,8 +125,8 @@ public with sharing class ApprovalMatrixPolicy {
         Boolean aboveCeiling = maxVariationPercent != null
             && percentMagnitude != null
             && percentMagnitude > maxVariationPercent;
-        if (aboveCeiling || required == Level.BLOQUEADA) {
-            result.level = Level.BLOQUEADA;
+        if (aboveCeiling || required == ApprovalMatrixPolicy.Level.BLOQUEADA) {
+            result.level = ApprovalMatrixPolicy.Level.BLOQUEADA;
             result.blocked = true;
             result.blockCode = SubscriptionConstants.ERR_VARIACAO_ACIMA_LIMITE;
             result.blockMessage = 'A variação de MRR'
@@ -162,7 +162,7 @@ public with sharing class ApprovalMatrixPolicy {
                 return rule.level;
             }
         }
-        return Level.BLOQUEADA;
+        return ApprovalMatrixPolicy.Level.BLOQUEADA;
     }
 
     private static Level maxOf(Level a, Level b) {
@@ -198,16 +198,16 @@ public with sharing class ApprovalMatrixPolicy {
     // ---- Conversoes (codigos do metadado <-> enum <-> rotulo da picklist) ----
 
     public static String labelOf(Level level) {
-        if (level == Level.AUTOMATICA) {
+        if (level == ApprovalMatrixPolicy.Level.AUTOMATICA) {
             return SubscriptionConstants.NIVEL_AUTOMATICA;
         }
-        if (level == Level.GERENTE) {
+        if (level == ApprovalMatrixPolicy.Level.GERENTE) {
             return SubscriptionConstants.NIVEL_GERENTE;
         }
-        if (level == Level.DIRETOR) {
+        if (level == ApprovalMatrixPolicy.Level.DIRETOR) {
             return SubscriptionConstants.NIVEL_DIRETOR;
         }
-        if (level == Level.FINANCEIRO) {
+        if (level == ApprovalMatrixPolicy.Level.FINANCEIRO) {
             return SubscriptionConstants.NIVEL_FINANCEIRO;
         }
         return null;
@@ -216,43 +216,43 @@ public with sharing class ApprovalMatrixPolicy {
     /** Aceita o rotulo da picklist; devolve null se nao reconhecido. */
     public static Level levelFromLabel(String label) {
         if (label == SubscriptionConstants.NIVEL_AUTOMATICA) {
-            return Level.AUTOMATICA;
+            return ApprovalMatrixPolicy.Level.AUTOMATICA;
         }
         if (label == SubscriptionConstants.NIVEL_GERENTE) {
-            return Level.GERENTE;
+            return ApprovalMatrixPolicy.Level.GERENTE;
         }
         if (label == SubscriptionConstants.NIVEL_DIRETOR) {
-            return Level.DIRETOR;
+            return ApprovalMatrixPolicy.Level.DIRETOR;
         }
         if (label == SubscriptionConstants.NIVEL_FINANCEIRO) {
-            return Level.FINANCEIRO;
+            return ApprovalMatrixPolicy.Level.FINANCEIRO;
         }
         return null;
     }
 
     /** Nome da Custom Permission que habilita decidir o nivel; null para Automatica/Bloqueada. */
     public static String customPermissionOf(Level level) {
-        if (level == Level.GERENTE) {
+        if (level == ApprovalMatrixPolicy.Level.GERENTE) {
             return SubscriptionConstants.PERM_APROVAR_GERENTE;
         }
-        if (level == Level.DIRETOR) {
+        if (level == ApprovalMatrixPolicy.Level.DIRETOR) {
             return SubscriptionConstants.PERM_APROVAR_DIRETOR;
         }
-        if (level == Level.FINANCEIRO) {
+        if (level == ApprovalMatrixPolicy.Level.FINANCEIRO) {
             return SubscriptionConstants.PERM_APROVAR_FINANCEIRO;
         }
         return null;
     }
 
     public static Level levelFromCode(String code) {
-        return Level.valueOf(code);
+        return ApprovalMatrixPolicy.Level.valueOf(code);
     }
 
     public static Direction directionFromCode(String code) {
-        return Direction.valueOf(code);
+        return ApprovalMatrixPolicy.Direction.valueOf(code);
     }
 
     public static Criterion criterionFromCode(String code) {
-        return Criterion.valueOf(code);
+        return ApprovalMatrixPolicy.Criterion.valueOf(code);
     }
 }

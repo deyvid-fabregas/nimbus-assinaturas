@@ -121,20 +121,20 @@ public with sharing class SolicitacaoAlteracaoHandler {
     }
 
     /** Roda o verificador em lote; erro de configuracao (batch) vira erro em cada registro do grupo. */
-    private static void applyById(List<Solicitacao_Alteracao__c> group, Set<Id> rejected, BatchChecker checker) {
-        if (group.isEmpty()) {
+    private static void applyById(List<Solicitacao_Alteracao__c> records, Set<Id> rejected, BatchChecker checker) {
+        if (records.isEmpty()) {
             return;
         }
         try {
-            Map<Id, String> errors = checker.check(group);
-            for (Solicitacao_Alteracao__c record : group) {
+            Map<Id, String> errors = checker.check(records);
+            for (Solicitacao_Alteracao__c record : records) {
                 String error = errors.get(record.Id);
                 if (error != null) {
                     reject(record, error, rejected);
                 }
             }
         } catch (SubscriptionException batchError) {
-            for (Solicitacao_Alteracao__c record : group) {
+            for (Solicitacao_Alteracao__c record : records) {
                 reject(record, batchError.getMessage(), rejected);
             }
         }

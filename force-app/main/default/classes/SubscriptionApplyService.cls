@@ -27,7 +27,7 @@ public with sharing class SubscriptionApplyService {
     private final ContractItemSelector contractItemSelector = new ContractItemSelector();
     private final RequestItemSelector requestItemSelector = new RequestItemSelector();
     private final PlanSelector planSelector = new PlanSelector();
-    private final AdditiveSelector additiveSelector = new AdditiveSelector();
+    private final AdditiveSelector additives = new AdditiveSelector();
     private final PricebookResolver pricebookResolver = new PricebookResolver();
 
     public SubscriptionApplyResultDTO apply(Id requestId) {
@@ -52,7 +52,7 @@ public with sharing class SubscriptionApplyService {
             }
             Solicitacao_Alteracao__c request = lockedRequests[0];
             String uniqueKey = AdditiveSelector.uniqueKey(request.Id, request.Ciclo_Aprovacao__c);
-            List<Aditivo_Contrato__c> existing = additiveSelector.selectByUniqueKeys(new Set<String>{ uniqueKey });
+            List<Aditivo_Contrato__c> existing = additives.selectByUniqueKeys(new Set<String>{ uniqueKey });
             if (!existing.isEmpty()) {
                 return alreadyApplied(request.Id, existing[0]);
             }
@@ -370,7 +370,7 @@ public with sharing class SubscriptionApplyService {
         if (reloaded.isEmpty()) {
             return null;
         }
-        List<Aditivo_Contrato__c> existing = additiveSelector.selectByUniqueKeys(
+        List<Aditivo_Contrato__c> existing = additives.selectByUniqueKeys(
             new Set<String>{ AdditiveSelector.uniqueKey(requestId, reloaded[0].Ciclo_Aprovacao__c) }
         );
         return existing.isEmpty() ? null : alreadyApplied(requestId, existing[0]);
