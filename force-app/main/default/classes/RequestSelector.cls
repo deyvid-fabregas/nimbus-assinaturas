@@ -73,4 +73,23 @@ public with sharing class RequestSelector {
             WITH USER_MODE
         ];
     }
+
+    /** Solicitacao com nomes relacionados para exibicao (resumo/Screen Flows). Consulta unica por Id. */
+    public List<Solicitacao_Alteracao__c> selectSummaryById(Id requestId) {
+        if (requestId == null) {
+            return new List<Solicitacao_Alteracao__c>();
+        }
+        return [
+            SELECT
+                Id, Name, Contrato__c, Contrato__r.Name, Contrato__r.Plano_Atual__r.Name,
+                Plano_Proposto__r.Name, Tipo__c, Status__c, Nivel_Aprovacao__c,
+                MRR_Base__c, MRR_Proposto__c, Variacao_Absoluta__c, Variacao_Percentual__c,
+                Data_Efetivacao__c, Ciclo_Aprovacao__c, Justificativa__c,
+                Aprovador__c, Aprovador__r.Name, Data_Decisao__c, Motivo_Rejeicao__c,
+                CreatedById, CreatedBy.Name
+            FROM Solicitacao_Alteracao__c
+            WHERE Id = :requestId
+            WITH USER_MODE
+        ];
+    }
 }
